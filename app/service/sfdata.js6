@@ -1,0 +1,43 @@
+'use strict';
+
+const SF_API_VERSION = '/services/data/v32.0';
+
+var access_token, host;
+
+export default class SFData {
+
+  static set access_token(value) {
+    access_token = value;
+    console.log ('setting ' + access_token);
+  }
+  static set host(value) {
+  host = value;
+  console.log ('setting ' + host);
+  }
+
+  static query(soql) {
+    // Creating a promise
+      var promise = new Promise( function (resolve, reject) {
+
+        // Instantiates the XMLHttpRequest
+        var client = new XMLHttpRequest();
+        client.open('GET', host + SF_API_VERSION + '/query.json?q=' + encodeURIComponent(soql));
+        client.setRequestHeader ("Authorization", "OAuth " + access_token);
+        client.send();
+
+        client.onload = function () {
+          if (this.status == 200) {
+            // Performs the function "resolve" when this.status is equal to 200
+            resolve(JSON.parse(this.response));
+          } else {
+            // Performs the function "reject" when this.status is different than 200
+            reject(this.statusText);
+          }
+        };
+        client.onerror = function () {
+          reject(this.statusText);
+        };
+      });
+      return promise;
+  }
+}

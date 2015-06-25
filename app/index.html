@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title><%= title %></title>
+  <% if (debug === 'false') { %>
+  <link type="text/css" rel="stylesheet" media="all" href="css/app.<%= version %>.css" />
+  <% } %>
+
+  <script>
+        var debug_session = <%= AccessToken1 %> + "!" + <%= AccessToken2 %>;
+        var _sfdccreds = {
+            host: 'https://eu5.salesforce.com',
+            sfdc_api_version: '/services/data/v32.0',
+            session_api: '{!$Api.Session_ID}'
+        };
+        if (_sfdccreds.session_api.indexOf("Api.Session_ID") > -1) {
+            console.log ('we are not in a vf page, set debug params');
+            _sfdccreds.session_api = debug_session;
+        }
+  </script>
+
+</head>
+<body>
+  <div id="app"></div>
+  <script src="js/app.<%= version %>.js"></script>
+</body>
+</html>

@@ -19,6 +19,7 @@
     "babel-loader": "*",
     "babel-runtime": "*",
     "css-loader": "^0.15.1",
+    "extract-text-webpack-plugin": "^0.8.2",
     "file-loader": "*",
     "html-loader": "*",
     "lodash": "*",

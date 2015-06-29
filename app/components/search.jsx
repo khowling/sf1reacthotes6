@@ -66,9 +66,11 @@ export  class SearchDialog extends Component {
   componentDidMount() {
     let self = this;
     SFData.query ('select name, type from account').then (
-      function (res) {
-        console.log ('res : ' + JSON.stringify(res));
-        self.setState ({showit: res.records, allrecs: res.records});
+      function (value) {
+        console.log ('value : ' + JSON.stringify(value));
+        self.setState ({showit: value.records, allrecs: value.records});
+      }, function (reason) {
+        console.log ('reason : ' + JSON.stringify(reason));
       }
     )
   }

@@ -3,12 +3,11 @@
 
 import './index.html';
 import './scss/app.scss';
+import './scss/site.css';
 import 'babel-core/polyfill';
 
 
 import React from 'react';
-import Velocity from 'velocity-animate';
-
 import Main from './components/main.jsx';
 
 import SFData from './service/sfdata.js6';

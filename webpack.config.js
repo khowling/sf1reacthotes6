@@ -5,6 +5,7 @@ var webpack = require('webpack');
 var util = require('util');
 var path = require('path');
 var fs = require('fs');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var pkg = require('./package.json');
 var port = pkg.config.devPort,
@@ -13,6 +14,7 @@ var port = pkg.config.devPort,
 var DEBUG = process.env.NODE_ENV === 'development';
 var TEST = process.env.NODE_ENV === 'test';
 var jsBundle = path.join('js', util.format('[name].%s.js', pkg.version));
+var cssBundle = path.join('css', util.format('[name].%s.css', pkg.version));
 
 var entry = {
   app: ['./app.jsx']
@@ -24,6 +26,9 @@ if (DEBUG) {
 }
 
 var plugins = [
+  new ExtractTextPlugin(cssBundle, {
+    allChunks: true
+  }),
   new webpack.optimize.OccurenceOrderPlugin()
 ];
 
@@ -40,23 +45,22 @@ if (DEBUG) {
   );
 }
 
+
 var sassParams = [
   'outputStyle=expanded',
   'includePaths[]=' + path.resolve(__dirname, '../app/scss'),
   'includePaths[]=' + path.resolve(__dirname, '../node_modules')
 ];
 
-var cssLoader = [
-    'style-loader',
+var cssLoader = ExtractTextPlugin.extract('style-loader',[
     'css-loader',
     'postcss-loader'
-  ].join('!');
-var sassLoader = [
-    'style-loader',
+  ].join('!'));
+var sassLoader = ExtractTextPlugin.extract('style-loader', [
     'css-loader',
     'postcss-loader',
     'sass-loader?' + sassParams.join('&')
-  ].join('!');
+  ].join('!'));
 var fileLoader = 'file-loader?name=[path][name].[ext]';
 var forceCreds = fs.readFileSync(process.env.HOME +"/.force/accounts/khowling@oneview.ul", "utf8").match(/\"AccessToken\":\"([^\!]+)!([^\"]+)/);
 console.log ('accesstoken : ' + forceCreds[1] + '!' + forceCreds[2]);

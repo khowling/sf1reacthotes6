@@ -10,16 +10,18 @@ var port = pkg.config.devPort,
     host = pkg.config.devHost;
 
 
+var https = false;
+
 new WebpackDevServer(
   webpack(config), {
     publicPath: config.output.publicPath,
     hot: true,
-    https: true
+    https: https
 }).listen(port, host, function (err, result) {
         if (err) {
             console.log(err);
         }
-        var url = util.format('https://%s:%d', host, port);
+        var url = util.format('http%s://%s:%d', https ? 's' : '', host, port);
         console.log('Listening at %s', url);
         opn(url);
     });

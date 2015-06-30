@@ -9,7 +9,7 @@ import VelocityTransitionGroup from './utils/VelocityTransitionGroup.jsx';
 import SFData from '../service/sfdata.js6';
 
 
-export default class ProductPage extends Component {
+export default class Products extends Component {
   render() {
     return (
       <ProductTile name="Platinum Package" price="$200,000" desc1="$8,000 p/m" desc2="25 Units"/>
@@ -21,20 +21,20 @@ export default class ProductPage extends Component {
 class ProductTile {
   render() {
     return (
-<div class="tile" label="[object Object]">
-  <div class="grid wrap">
-    <div class="col size--1-of-1 text-body--regular">
-      <span class="m-left--x-small float-right">
+<div className="tile tile--kanban" label="[object Object]">
+  <div className="grid wrap">
+    <div className="col size--1-of-1 text-body--regular">
+      <span className="m-left--x-small float-right">
         <span>{this.props.price}</span>
       </span>
-      <p class="truncate">
+      <p className="truncate">
         <a href="#">{this.props.name}</a>
       </p>
     </div>
-    <div class="col text-body--small">
-      <ul class="list--horizontal">
-        <li class="list__item list__item--separator">{this.props.desc1}</li>
-        <li class="list__item list__item--separator">{this.props.desc2}</li>
+    <div className="col text-body--small">
+      <ul className="list--horizontal">
+        <li className="list__item list__item--separator">{this.props.desc1}</li>
+        <li className="list__item list__item--separator">{this.props.desc2}</li>
       </ul>
     </div>
   </div>

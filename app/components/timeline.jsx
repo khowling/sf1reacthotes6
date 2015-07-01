@@ -3,8 +3,10 @@
 import React, {Component} from 'react';
 import { range, seq, compose, map, filter } from 'transducers.js';
 
-import {SvgIcon} from './lowlevel.jsx';
-import VelocityTransitionGroup from './utils/VelocityTransitionGroup.jsx';
+import Velocity from 'velocity-animate';
+import 'velocity-animate/velocity.ui';
+
+import {TabHeading, SvgIcon} from './lowlevel.jsx';
 
 import SFData from '../service/sfdata.js6';
 
@@ -67,11 +69,23 @@ class TimeLineItem extends Component {
     )
   }
 }
+
+
 export default class TimeLine extends Component {
+
+  componentDidMount() {
+
+    Velocity.animate(
+      React.findDOMNode(this.refs.timeline).children,
+      "transition.slideLeftIn", { stagger: 250 });
+
+  }
 
   render() {
     return (
-<ul className="timeline">
+<div>
+<TabHeading icon={TimeLine.navProps.icon} title={TimeLine.navProps.name}/>
+<ul className="timeline" ref="timeline">
 
   <TimeLineItem type="email" title="Updated Proposal" due="Feb 24" desc="Hi guys, Thanks for meeting with the team today and going through the proposals we saw. This goes on
     until it&apos;s truncated."></TimeLineItem>
@@ -242,6 +256,8 @@ export default class TimeLine extends Component {
   </li>
 
 </ul>
+</div>
     )
   }
 }
+TimeLine.navProps = {name: 'my day', icon: 'event', nav: TimeLine.name};

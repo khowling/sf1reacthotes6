@@ -3,7 +3,7 @@
 import React, {Component} from 'react';
 import { range, seq, compose, map, filter } from 'transducers.js';
 
-import {SvgIcon} from './lowlevel.jsx';
+import {TabHeading, SvgIcon} from './lowlevel.jsx';
 import VelocityTransitionGroup from './utils/VelocityTransitionGroup.jsx';
 
 import SFData from '../service/sfdata.js6';
@@ -12,11 +12,16 @@ import SFData from '../service/sfdata.js6';
 export default class Products extends Component {
   render() {
     return (
-      <ProductTile name="Platinum Package" price="$200,000" desc1="$8,000 p/m" desc2="25 Units"/>
+      <div >
+        <TabHeading icon={Products.navProps.icon} title={Products.navProps.name}/>
+        <ProductTile name="Platinum Package" price="$200,000" desc1="$8,000 p/m" desc2="25 Units"/>
+        <ProductTile name="Platinum Package" price="$200,000" desc1="$8,000 p/m" desc2="25 Units"/>
+        <ProductTile name="Platinum Package" price="$200,000" desc1="$8,000 p/m" desc2="25 Units"/>
+      </div>
     )
   }
 }
-
+Products.navProps = {name: 'products', icon: 'product', nav: Products.name};
 
 class ProductTile {
   render() {

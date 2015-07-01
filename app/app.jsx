@@ -100,7 +100,7 @@ class Router extends Component {
       console.log ('App Initial URL : ' + JSON.stringify(newComp));
       this.state =  {renderThis: newComp.hash, urlparam: newComp.params, formdata: []};
     }
-
+/*
     navTo (element) {
       let href, newComp;
       if (typeof element === 'object') {
@@ -119,7 +119,7 @@ class Router extends Component {
       this.setState ({renderThis: newComp.hash, urlparam: newComp.params});
       //}
     }
-
+*/
     render() {
       console.log ('App render() - returning new Component: ' + this.state.renderThis);
 
@@ -142,14 +142,14 @@ class Router extends Component {
 
 import Main from './components/main.jsx';
 import Products from './components/products.jsx';
-import {SearchDialog, TabHeading} from './components/search.jsx';
+import SearchDialog from './components/search.jsx';
 import TimeLine from './components/timeline.jsx';
-var compfact = CreateFactories(Main, Products, SearchDialog, TabHeading, TimeLine);
+var compfact = CreateFactories(Main, Products, SearchDialog, TimeLine);
 var menuItems = [
   {name: 'my dashboard', icon: 'dashboard', nav: ''},
-  {name: 'products', icon: 'product', nav: 'Products'},
-  {name: 'my orders', icon: 'opportunity', nav: 'SearchDialog'},
-  {name: 'my day', icon: 'event', nav: 'TimeLine'}];
+  Products.navProps,
+  SearchDialog.navProps,
+  TimeLine.navProps];
 
 import MenuNav from './components/menunav.jsx';
 

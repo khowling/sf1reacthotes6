@@ -10,7 +10,7 @@ var port = pkg.config.devPort,
     host = pkg.config.devHost;
 
 
-var https = false;
+var https = true;
 
 new WebpackDevServer(
   webpack(config), {

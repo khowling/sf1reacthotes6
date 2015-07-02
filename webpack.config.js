@@ -97,7 +97,7 @@ var config = {
     module: {
         loaders: [
             {
-              test: /\.jsx$|\.js6$/,
+              test: /\.jsx$|\.es6$/,
               exclude: /node_modules/,
               loaders: jsxLoader
             },

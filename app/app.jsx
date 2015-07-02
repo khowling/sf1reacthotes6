@@ -7,10 +7,32 @@ import 'babel-core/polyfill';
 
 import React, {Component} from 'react';
 
-import SFData from './service/sfdata.js6';
-SFData.host = _sfdccreds.host;
-SFData.access_token = _sfdccreds.session_api;
+import SFData from './service/sfdata.es6';
 
+var sfd = new SFData ({
+  host: _sfdccreds.host;
+  access_token: _sfdccreds.session_api},
+  [
+    {
+      sObject: "Contact",
+      primaryField: 'LastName',
+      allFields: ["Id", "FirstName", "LastName", "Email", "khdev__Company__c", "MobilePhone", "MailingPostalCode"],
+      indexSpec:[{"path":"Id","type":"string"},{"path":"LastName","type":"string"},{"path":"khdev__Company__c","type":"string"}]
+    },
+    {
+      sObject: "khdev__Product__c",
+      primaryField: 'Name',
+      indexSpec:[{"path":"Id","type":"string"},{"path":"Name","type":"string"}, {"path":"khdev__Type__c","type":"string"}, {"path":"khdev__Make__c","type":"string"}, {"path":"khdev__Available_Tariffs__c","type":"string"}, {"path":"khdev__Operating_system__c","type":"string"}, {"path":"khdev__Colour__c","type":"string"}, {"path":"khdev__ThumbImageB64__c","type":"string"} ],
+      allFields: ["Id", "Name", "khdev__Description__c", "khdev__Type__c", "khdev__Make__c", "khdev__Available_Tariffs__c", "khdev__Operating_system__c", "khdev__Colour__c", "khdev__ConfigMetaData__c", "khdev__ThumbImageB64__c", "khdev__Base_Price__c"],
+    },
+    {
+      sObject:  "khdev__Order__c": {
+      primaryField: 'Name',
+      indexSpec:[{"path":"Id","type":"string"},{"path":"Name","type":"string"}],
+      allFields: ["Id", "khdev__Contact__c","khdev__OrderMetaData__c"],
+      childLookupFields: { "khdev__Contact__c": "Contact"}
+    }
+  ]);
 
 function CreateFactories(...comps) {
   var res = {};

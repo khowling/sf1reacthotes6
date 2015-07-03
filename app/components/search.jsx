@@ -4,9 +4,8 @@ import React, {Component} from 'react';
 import { range, seq, compose, map, filter } from 'transducers.js';
 
 import {TabHeading, SvgIcon} from './lowlevel.jsx';
-import VelocityTransitionGroup from './utils/VelocityTransitionGroup.jsx';
 
-import SFData from '../service/sfdata.js6';
+import SFData from '../service/sfdata.es6';
 
 
 export default class SearchDialog extends Component {
@@ -22,11 +21,14 @@ export default class SearchDialog extends Component {
   }
 
   componentDidMount() {
-    let self = this;
-    SFData.query ('select name, type from account').then (
+    let self = this,
+        sf = SFData.instance;
+    console.log ('calling query');
+    //sf.query ('select name, type from account').then (
+    sf.queryLocal ('Account', ['Name', 'Type']).then (
       function (value) {
-        console.log ('value : ' + JSON.stringify(value));
-        self.setState ({showit: value.records, allrecs: value.records});
+        //console.log ('value : ' + JSON.stringify(value));
+        self.setState ({showit: value, allrecs: value});
       }, function (reason) {
         console.log ('reason : ' + JSON.stringify(reason));
       }

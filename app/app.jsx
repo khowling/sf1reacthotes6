@@ -5,14 +5,20 @@ import './scss/app.scss';
 import './scss/site.css';
 import 'babel-core/polyfill';
 
-import React, {Component} from 'react';
+import React from 'react';
 
 import SFData from './service/sfdata.es6';
 
 var sfd = new SFData ({
-  host: _sfdccreds.host;
+  host: _sfdccreds.host,
   access_token: _sfdccreds.session_api},
   [
+    {
+      sObject: "Account",
+      primaryField: 'Name',
+      allFields: ["Id", "Name", "Type", "Industry", "ShippingStreet", "ShippingCity", "ShippingPostalCode", "ShippingLatitude", "ShippingLongitude", "ThumbImageB64__c"],
+      indexSpec:[{"path":"Id","type":"string"},{"path":"Name","type":"string"},{"path":"ShippingCity","type":"string"}]
+    },
     {
       sObject: "Contact",
       primaryField: 'LastName',
@@ -20,13 +26,13 @@ var sfd = new SFData ({
       indexSpec:[{"path":"Id","type":"string"},{"path":"LastName","type":"string"},{"path":"khdev__Company__c","type":"string"}]
     },
     {
-      sObject: "khdev__Product__c",
-      primaryField: 'Name',
-      indexSpec:[{"path":"Id","type":"string"},{"path":"Name","type":"string"}, {"path":"khdev__Type__c","type":"string"}, {"path":"khdev__Make__c","type":"string"}, {"path":"khdev__Available_Tariffs__c","type":"string"}, {"path":"khdev__Operating_system__c","type":"string"}, {"path":"khdev__Colour__c","type":"string"}, {"path":"khdev__ThumbImageB64__c","type":"string"} ],
-      allFields: ["Id", "Name", "khdev__Description__c", "khdev__Type__c", "khdev__Make__c", "khdev__Available_Tariffs__c", "khdev__Operating_system__c", "khdev__Colour__c", "khdev__ConfigMetaData__c", "khdev__ThumbImageB64__c", "khdev__Base_Price__c"],
+      sObject: "Product__c",
+		  primaryField: 'Name',
+      allFields: ["Id", "Name", "Description__c", "Category__c", "Brand__c", "Status__c", "Packaging__c", "ConfigMetaData__c", "ThumbImageB64__c", "Base_Price__c"],
+    	indexSpec:[{"path":"Id","type":"string"},{"path":"Name","type":"string"}, {"path":"Category__c","type":"string"}, {"path":"Brand__c","type":"string"}, {"path":"Status__c","type":"string"}, {"path":"Packaging__c","type":"string"}, {"path":"ThumbImageB64__c","type":"string"}]
     },
     {
-      sObject:  "khdev__Order__c": {
+      sObject:  "khdev__Order__c",
       primaryField: 'Name',
       indexSpec:[{"path":"Id","type":"string"},{"path":"Name","type":"string"}],
       allFields: ["Id", "khdev__Contact__c","khdev__OrderMetaData__c"],
@@ -34,152 +40,47 @@ var sfd = new SFData ({
     }
   ]);
 
-function CreateFactories(...comps) {
-  var res = {};
-  for (let mods of comps) {
-    console.log ('import mods : ' + mods);
-    if (typeof mods === "function" ) {
-      console.log ('creating factory : ' + mods.name);
-      res[mods.name] = React.createFactory(mods);
-    } else {
-      for (let el of mods) {
-        if (typeof el  === "function" ) {
-          console.log ('creating factory : ' + el.name);
-          res[el.name] = React.createFactory(el);
-        }
-      }
-    }
-  }
-  return res;
-}
+
+sfd.init();
+console.log ('add listener for cordova deviceready');
+document.addEventListener('deviceready', function() {
+  console.log ('got cordova deviceready');
+  sfd.cordovaReady(window.cordova);
+});
 
 
-
-var _RouterInitialised = false;
-
-class Router extends Component {
-
-    static getURLNav (lnkhash) {
-      var gethash = lnkhash || decodeURI(
-        // We can't use window.location.hash here because it's not
-        // consistent across browsers - Firefox will pre-decode it!
-        // window.location.pathname + window.location.search
-        window.location.href.split('#')[1] || ''
-      ) || 'Main';
-      console.log ('App _getURLNav url changed : ' + gethash);
-      let [comp, parms] = gethash.split('?');
-      let paramjson = {};
-      if (typeof parms !== 'undefined') {
-        let tfn = x => {
-          let [n, v] = x.split('=');
-          if (n === 'gid') {
-            let [view, id] = v.split (':');
-            paramjson.view = view;
-            paramjson.id = id;
-          } else
-            paramjson[n] = v;
-          };
-
-        if (parms.indexOf ('&') > -1)
-          parms.split('&').map (tfn);
-        else
-          tfn (parms);
-      }
-      return ({hash: comp, params: paramjson});
-    }
-
-    static setupRouterfunction (onPopState) {
-
-      if (!_RouterInitialised) {
-        if (true) { // use HTML5 history
-          if (window.addEventListener) {
-            window.addEventListener('popstate', onPopState, false);
-          } else {
-            window.attachEvent('popstate', onPopState);
-          }
-        } else {
-          if (window.addEventListener) {
-            window.addEventListener('hashchange', onHashChange, false);
-          } else {
-            window.attachEvent('onhashchange', onHashChange);
-          }
-        }
-        _RouterInitialised = true;
-      }
-    }
-
-    constructor (props) {
-      super (props);
-      Router.setupRouterfunction ( () => {
-        var newComp = Router.getURLNav();
-        console.log ('App url changed : ' + JSON.stringify(newComp));
-        //if (newComp !== this.state.renderThis) {
-          this.setState ({renderThis: newComp.hash, urlparam: newComp.params});
-        //};
-      });
-
-      var newComp = Router.getURLNav();
-      console.log ('App Initial URL : ' + JSON.stringify(newComp));
-      this.state =  {renderThis: newComp.hash, urlparam: newComp.params, formdata: []};
-    }
-/*
-    navTo (element) {
-      let href, newComp;
-      if (typeof element === 'object') {
-        event.preventDefault();
-        //var newComp = $(event.target).attr('href').substring(1);
-        href = $(element.currentTarget).attr('href').substring(1);
-        newComp = Router.getURLNav (href);
-      } else if (typeof element === 'string') {
-        href = element;
-        newComp = Router.getURLNav (href);
-      }
-      // HTML5 history API
-      history.pushState({}, "page", "/#" + href);
-      console.log ('App navTo ' + JSON.stringify(newComp));
-      //if (newComp !== this.state.renderThis) {
-      this.setState ({renderThis: newComp.hash, urlparam: newComp.params});
-      //}
-    }
-*/
-    render() {
-      console.log ('App render() - returning new Component: ' + this.state.renderThis);
-
-      //if (this.state.renderThis === 'Main') {
-      //  return React.createElement (Main,
-      //    {key: JSON.stringify(this.state.urlparam),
-      //     navTo: this.navTo,
-      //     urlparam: this.state.urlparam});
-      if (compfact[this.state.renderThis]) {
-          console.log ('App render() - returning new Component ' + this.state.renderThis);
-          return compfact[this.state.renderThis](
-            {key: JSON.stringify(this.state.urlparam),
-             navTo: this.navTo,
-             urlparam: this.state.urlparam});
-      } else return (
-          <div>404 {this.state.renderThis}</div>
-      )
-    }
-}
 
 import Main from './components/main.jsx';
 import Products from './components/products.jsx';
 import SearchDialog from './components/search.jsx';
 import TimeLine from './components/timeline.jsx';
-var compfact = CreateFactories(Main, Products, SearchDialog, TimeLine);
-var menuItems = [
-  {name: 'my dashboard', icon: 'dashboard', nav: ''},
-  Products.navProps,
-  SearchDialog.navProps,
-  TimeLine.navProps];
+let [factories, navMeta] = function CreateFactories(...comps) {
+  var factories = {};
+  var navMeta = [];
+  for (let mods of comps) {
+    //console.log ('import mods : ' + mods);
+    if (typeof mods === "function" ) {
+      if (mods.navProps) {
+        //console.log ('creating factory : ' + mods.name);
+        factories[mods.name] = React.createFactory(mods);
+        navMeta.push (mods.navProps);
+      }
+    }
+  }
+  return [factories,  navMeta];
+}(Main, Products, SearchDialog, TimeLine);
 
+
+import Router from './components/router.jsx';
 import MenuNav from './components/menunav.jsx';
+import SyncProgress from './components/syncprogress.jsx';
 
 React.render(
   <div>
-    <MenuNav menuItems={menuItems}/>
+    <MenuNav menuItems={navMeta}/>
+    <SyncProgress/>
     <main className="site-content container">
-      <Router/>
+      <Router componentFactories={factories}/>
     </main>
   </div>,
   document.getElementById('app')

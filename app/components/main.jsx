@@ -25,11 +25,6 @@ export class MainHome extends Component {
               bar.setText(title1 +(bar.value() * 100).toFixed(0) + '%');
           }
       });
-
-    progressBar.animate(.65, function() {
-      console.log ('coplete');
-    })
-
     var title2 = 'Completed Surveys ',
         progressBar2 = new ProgressBar.Circle(React.findDOMNode(this.refs.p2), {
           color: '#0070d2',
@@ -44,17 +39,13 @@ export class MainHome extends Component {
             bar.setText(title2 +(bar.value() * 100).toFixed(0) + '%');
           }
       });
-
-    progressBar2.animate(.77, function() {
-      console.log ('coplete');
-    });
-
     var title3 = 'Todays Orders ',
         progressBar3 = new ProgressBar.Circle(React.findDOMNode(this.refs.p3), {
           color: '#3cc2b3',
           strokeWidth: 5,
           trailWidth: 1,
           duration: 1500,
+          delay: 6000 ,
           text: {
             value: title3 + '£0',
             className: 'text-heading--label'
@@ -64,9 +55,17 @@ export class MainHome extends Component {
           }
       });
 
-    progressBar3.animate(.327623, function() {
-      console.log ('coplete');
-    });
+    setTimeout(() => {
+      progressBar.animate(.65, function() {
+        console.log ('coplete');
+      })
+      progressBar2.animate(.77, function() {
+          console.log ('coplete');
+        });
+      progressBar3.animate(.327623, function() {
+        console.log ('coplete');
+      });
+    }, 5000);
 
     Velocity.animate(
       React.findDOMNode(this.refs.al1),
@@ -85,20 +84,6 @@ export class MainHome extends Component {
     return (
 
       <div className="site-content container" >
-
-        <div ref="al1" style={{display: "none"}} className="notify notify--alert notify--error theme--inverse-text theme--alert-texture">
-          <button className="button notify__close" onClick={this.closeAl1.bind(this)}>
-            <SvgIcon svgClass="button__icon button__icon--inverse" useHref="/assets/icons/utility-sprite/svg/symbols.svg#close"/>
-            <span className="assistive-text">Close</span>
-          </button>
-          <span className="assistive-text">Success</span>
-          <h2 >
-            <SvgIcon svgClass="icon icon-text-email icon--small m-right--x-small" useHref="/assets/icons/custom-sprite/svg/symbols.svg#custom19"/>
-            <span>PRODUCT SHORTAGE ALERT: Sunday March 15, 8:00 AM - 10:00 PST </span><br/>
-            <a href="#" >More Information</a>
-          </h2>
-        </div>
-
 
         <div className="grid site-grid--landing wrap">
 
@@ -123,10 +108,25 @@ export class MainHome extends Component {
 
         </div>
 
+        <div ref="al1" style={{display: "none"}} className="notify notify--alert notify--error theme--inverse-text theme--alert-texture">
+          <button className="button notify__close" onClick={this.closeAl1.bind(this)}>
+            <SvgIcon svgClass="button__icon button__icon--inverse" useHref="/assets/icons/utility-sprite/svg/symbols.svg#close"/>
+            <span className="assistive-text">Close</span>
+          </button>
+          <span className="assistive-text">Success</span>
+          <h2 >
+            <SvgIcon svgClass="icon icon-text-email icon--small m-right--x-small" useHref="/assets/icons/custom-sprite/svg/symbols.svg#custom19"/>
+            <span>PRODUCT SHORTAGE ALERT: Sunday March 15, 8:00 AM - 10:00 PST </span><br/>
+            <a href="#" >More Information</a>
+          </h2>
+        </div>
+
       </div>
     );
   }
 }
+
+
 
 export class NavContainer extends Component {
   render() {
@@ -165,11 +165,11 @@ export default class Main extends Component {
     return (
       <div>
       <header className=" site-masthead--landing theme--brand text-longform container" style={{paddingTop: "2rem",  paddingBottom: "2rem" }}>
-        <h1 className="text-heading--large" data-reactid=".24h8wenc16o.1.2.0.0">My Dashboard</h1>
+        <h1 className="text-heading--large" data-reactid=".24h8wenc16o.1.2.0.0">{Main.navProps.name}</h1>
       </header>
-    
       <MainHome/>
     </div>
     )
   }
 }
+Main.navProps = {name: 'my dashboard', icon: 'dashboard', nav: Main.name};

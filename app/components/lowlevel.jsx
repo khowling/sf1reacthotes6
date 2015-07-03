@@ -46,7 +46,7 @@ export class TabHeading extends Component {
   )
   }
 }
-TabHeading.propTypes = { icon: React.PropTypes.string, title: React.PropTypes.string, subtitle: React.PropTypes.string, follow: React.PropTypes.boolean };
+TabHeading.propTypes = { icon: React.PropTypes.string, title: React.PropTypes.string, subtitle: React.PropTypes.string, follow: React.PropTypes.bool };
 TabHeading.defaultProps = { icon: "user", title: "", subtitle: "record type", follow: false};
 
 export  class SvgIcon extends Component {

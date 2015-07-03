@@ -8,7 +8,7 @@ import 'velocity-animate/velocity.ui';
 
 import {TabHeading, SvgIcon} from './lowlevel.jsx';
 
-import SFData from '../service/sfdata.js6';
+import SFData from '../service/sfdata.es6';
 
 
 class TimeLineItem extends Component {

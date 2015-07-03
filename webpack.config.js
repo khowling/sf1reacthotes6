@@ -62,7 +62,7 @@ var sassLoader = ExtractTextPlugin.extract('style-loader', [
     'sass-loader?' + sassParams.join('&')
   ].join('!'));
 var fileLoader = 'file-loader?name=[path][name].[ext]';
-var forceCreds = fs.readFileSync(process.env.HOME +"/.force/accounts/khowling@oneview.ul", "utf8").match(/\"AccessToken\":\"([^\!]+)!([^\"]+)/);
+var forceCreds = fs.readFileSync(process.env.HOME +"/.force/accounts/khowling@posa.ul", "utf8").match(/\"AccessToken\":\"([^\!]+)!([^\"]+)/);
 console.log ('accesstoken : ' + forceCreds[1] + '!' + forceCreds[2]);
 var htmlLoader = fileLoader + '!' +
   'template-html-loader?' + [

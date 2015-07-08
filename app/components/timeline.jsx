@@ -77,7 +77,7 @@ export default class TimeLine extends Component {
 
     Velocity.animate(
       React.findDOMNode(this.refs.timeline).children,
-      "transition.slideLeftIn", { stagger: 250 });
+      "transition.slideLeftIn", { stagger: 50 });
 
   }
 

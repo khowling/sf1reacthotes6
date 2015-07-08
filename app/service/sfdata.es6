@@ -1,116 +1,6 @@
 'use strict';
 
-export class MockStore {
-
-  constructor(soups) {
-    if (window.localStorage)
-      this._store = window.localStorage;
-    else
-      this._store = {};
-    // register soups
-    soups.forEach(s => this._store[s.sObject] = JSON.stringify([]));
-  }
-
-  _find (obj, key, val) {
-    var sobjs = JSON.parse(this._store[obj]);
-    if (val) {
-        //console.log ('_find, for each existing record ' + sobjs.length);
-      for (var i in sobjs) {
-        var r = sobjs[i];
-        //console.log ('_find, testing ' + r[key] + ' == ' + val);
-        if (r[key] == val) {
-          return i;
-        }
-      }
-    }
-    return -1;
-  }
-
-  upsertSoupEntriesWithExternalId  (obj, records, keyfld, success, error) {
-    console.log ('SFDCMockStore upsertSoupEntriesWithExternalId '+obj+' on : ' + keyfld);
-    var sobjs = JSON.parse(this._store[obj]);
-    for (var r in records) {
-      var rec = records[r];
-      var exist = this._find(obj, keyfld, rec[keyfld]);
-      if (exist == -1) {
-        console.log ('SFDCMockStore upsertSoupEntriesWithExternalId, inserting key record: ' + rec[keyfld]);
-        rec._soupEntryId = sobjs.length +1;
-        sobjs.push (rec);
-      } else {
-        console.log ('SFDCMockStore upsertSoupEntriesWithExternalId, updating existing key : ' + rec[keyfld]);
-        // sobjs[exist] = rec
-        // real store merges the data!
-        for (var elidx in rec) {
-          sobjs[exist][elidx] = rec[elidx];
-        }
-      }
-    }
-    this._store[obj] = JSON.stringify(sobjs);
-    success (records);
-  }
-
-  registerSoup (sname, idxes, success, error) {
-    console.log ('SFDCMockStore registerSoup : ' + sname);
-    this._store[sname] = JSON.stringify([]);
-    success();
-  }
-
-  removeSoup (sname, success, error) {
-    console.log ('SFDCMockStore removeSoup : ' + sname);
-    this._store.removeItem(sname);
-    success();
-  }
-
-  upsertSoupEntries (obj, records, success, error) {
-    this.upsertSoupEntriesWithExternalId (obj, records, "_soupEntryId", success, error);
-  }
-
-
-  buildAllQuerySpec (field, order, limit) {
-    return {};
-  }
-
-  buildExactQuerySpec (field, equals, order, limit) {
-    return {"field": field, "equals": equals};
-  }
-
-  buildLikeQuerySpec (field, like, order, limit) {
-    return {"field": field, "like": like.substring(0, like.length -1)};
-  }
-
-  buildSmartQuerySpec (smartqsl, limit) {
-    return {"smartsql": smartqsl};
-  }
-
-  runSmartQuery (qspec, success,error) {
-    // TODO
-  }
-
-  querySoup  (obj, qspec, success,error) {
-    console.log ('SFDCMockStore querySoup : ' + obj +' : ' + JSON.stringify (qspec));
-    var sobjs = JSON.parse(this._store[obj]);
-    if (!qspec.field) {
-      success ( {currentPageOrderedEntries: Array.from (sobjs)});
-    } else if (qspec.field) {
-
-      var res = [];
-      for (var r in sobjs) {
-        var rec = sobjs[r];
-        var cval = rec[qspec.field];
-        if (cval) {
-          if (qspec.like && cval.indexOf(qspec.like) > -1) {
-            res.push (rec);
-          } else if (qspec.equals && qspec.equals == cval) {
-            res.push (rec);
-          }
-        }
-      }
-      success( {currentPageOrderedEntries: Array.from (res)});
-    } else {
-      success ({currentPageOrderedEntries:[]});
-    }
-  }
-}
+import MockStore from './mockstore.es6';
 
 let instance = null;
 const SF_API_VERSION = '/services/data/v32.0';
@@ -140,15 +30,27 @@ export default class SFData {
       //  once the sync has started.
       // When the internal REST request has completed
       // After each page of results is downloaded
+    this.query (target.query).then (
+       (value) => {
+         //console.log ('sussess value : ' + value.length);
+         this._smartStore.upsertSoupEntriesWithExternalId(soupName, value, "Id",
+             function (valueSoup) {
+               //console.log ('upsert success: ' + JSON.stringify(valueSoup));
+               callback ({success: true, recordsSynced: value.length});
+             }, function (reasonSoup) {
+               //console.log ('upsert error: ' + JSON.stringify(reasonSoup));
+               callback ({success: false, message: "upsertSoupEntriesWithExternalId: " + JSON.stringify(reasonSoup)});
+             });
+       }, (reason) => {
+         //console.log ('error reason : ' + JSON.stringify(reason));
+         callback ({success: false, message: "query: " + JSON.stringify(reason)});
+       });
 
-    //SFDCData.query ("Contact",  "*", null).then(function () {
   }
 
   _syncUp (target, soupName, options, callback) {
     // options: {fieldlist:[], mergeMode: “OVERWRITE” }
-
   }
-
 
   static _buildSOQL (obj, fields, where, orderby, soupQuery) {
     let qstr = "SELECT " + fields.map(f => soupQuery? "{" + obj + ":" + f + "}" : f).join(', ') + " FROM " + (soupQuery? "{" + obj + "}" : obj);
@@ -167,32 +69,31 @@ export default class SFData {
     return qstr;
   }
 
-  init () {
+  syncAll (progressCallback) {
+    progressCallback({progress: 0.5, msg: this._soups[0].sObject});
     this.syncDownSoup (this._soups[0]).then ( (success) => {
+      progressCallback({progress: 1, msg: this._soups[2].sObject});
       this.syncDownSoup (this._soups[2]).then ( (success) => {
-        console.log ('finished');
-      }, function (fail) {console.log ('error');});
+        progressCallback({progress: 0, msg: "last sync just now"});
+      }, function (fail) {
+        progressCallback({progress: -1, msg: "Error: " + fail});
+      });
     });
   }
 
   syncDownSoup (soupMeta) {
     var promise = new Promise( (resolve, reject) => {
-       this.query (SFData._buildSOQL (soupMeta.sObject, soupMeta.allFields)).then (
-          (value) => {
-            console.log ('sussess value : ' + value.length);
-            this._smartStore.upsertSoupEntriesWithExternalId(soupMeta.sObject, value, "Id",
-                function (valueSoup) {
-                  console.log ('upsert success: ' + JSON.stringify(valueSoup));
-                  resolve(value.length);
-                }, function (reasonSoup) {
-                  console.log ('upsert error: ' + JSON.stringify(reasonSoup));
-                  reject (JSON.stringify(reasonSoup))
-                });
-
-          }, (reason) => {
-            console.log ('error reason : ' + JSON.stringify(reason));
-            reject (JSON.stringify(reason));
-          });
+      this._syncDown(
+        {type:"soql", query:SFData._buildSOQL (soupMeta.sObject, soupMeta.allFields)},
+        soupMeta.sObject,
+        {mergeMode:"Force.MERGE_MODE_DOWNLOAD.OVERWRITE"},
+        (syncDownValue) => {
+          if (syncDownValue.success) {
+            resolve(syncDownValue.recordsSynced);
+          } else {
+            reject(syncDownValue.message);
+          }
+        })
     });
     return promise;
   }
@@ -228,7 +129,7 @@ export default class SFData {
       }
 
       var success = function (val) {
-        console.log ('querySoup got data ' + JSON.stringify(val));
+        //console.log ('querySoup got data ' + JSON.stringify(val));
         if (smartqsl) { // using smartSQL, need to do some reconstruction UGH!!!
           var results = [];
           for (var rrecidx in val.currentPageOrderedEntries) {
@@ -246,15 +147,15 @@ export default class SFData {
       }
 
       var error = function (val) {
-        console.log  ('querySoup error ' + JSON.stringify(val));
+        //console.log  ('querySoup error ' + JSON.stringify(val));
         reject(val);
       }
 
       if (smartqsl) {
-        console.log ('queryLocal() runSmartQuery ' + qspec);
+        //console.log ('queryLocal() runSmartQuery ' + qspec);
         smartstore.runSmartQuery(qspec, success, error);
       } else {
-        console.log ('queryLocal() querySoup ' + qspec);
+        //console.log ('queryLocal() querySoup ' + qspec);
         smartstore.querySoup(soup.sObject, qspec, success, error);
       }
 

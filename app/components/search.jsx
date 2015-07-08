@@ -36,8 +36,6 @@ export default class SearchDialog extends Component {
   }
 
   render() {
-    console.log ('rendering: ' + JSON.stringify (this.state.showit));
-    this.state.showit.map(function(item) { console.log (item.Name);});
       return (
 
         <div className="lookup" data-select="multi" data-scope="single" data-typeahead="true">

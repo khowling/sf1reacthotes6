@@ -54,7 +54,7 @@ Products.navProps = {name: 'products', icon: 'product', nav: Products.name};
 class ProductTile {
   render() {
     return (
-      <div className="media tile tile--kanban">
+      <div className="media tile tile--kanban" style={{marginTop: "4px"}}>
         <div className="media__figure">
           <span className="avatar avatar--circle avatar--small">
             <img src={"data:image/JPEG;base64,"+this.props.data.ThumbImageB64__c}/>

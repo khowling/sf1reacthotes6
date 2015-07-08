@@ -11,7 +11,7 @@ export class MainHome extends Component {
 
   componentDidMount() {
 
-    var title1 = 'Todays Visits   ',
+    var title1 = 'Visits   ',
         progressBar = new ProgressBar.Circle(React.findDOMNode(this.refs.p1), {
           color: '#FCB03C',
           strokeWidth: 5,
@@ -19,13 +19,13 @@ export class MainHome extends Component {
           duration: 1500,
           text: {
               value: title1 + '0%',
-              className: 'text-heading--label'
+              className: 'progress--label'
           },
           step: function(state, bar) {
               bar.setText(title1 +(bar.value() * 100).toFixed(0) + '%');
           }
       });
-    var title2 = 'Completed Surveys ',
+    var title2 = 'Surveys ',
         progressBar2 = new ProgressBar.Circle(React.findDOMNode(this.refs.p2), {
           color: '#0070d2',
           strokeWidth: 5,
@@ -33,13 +33,13 @@ export class MainHome extends Component {
           duration: 1500,
           text: {
             value: title2 + '0%',
-            className: 'text-heading--label'
+            className: 'progress--label'
           },
           step: function(state, bar) {
             bar.setText(title2 +(bar.value() * 100).toFixed(0) + '%');
           }
       });
-    var title3 = 'Todays Orders ',
+    var title3 = 'Orders ',
         progressBar3 = new ProgressBar.Circle(React.findDOMNode(this.refs.p3), {
           color: '#3cc2b3',
           strokeWidth: 5,
@@ -48,7 +48,7 @@ export class MainHome extends Component {
           delay: 6000 ,
           text: {
             value: title3 + '£0',
-            className: 'text-heading--label'
+            className: 'progress--label'
           },
           step: function(state, bar) {
             bar.setText(title3 + '£' + (bar.value() * 10000).toFixed(2) );
@@ -65,11 +65,15 @@ export class MainHome extends Component {
       progressBar3.animate(.327623, function() {
         console.log ('coplete');
       });
-    }, 5000);
+    }, 0);
+
+    Velocity.animate(
+    React.findDOMNode(this.refs.nextappt),
+      "callout.flash", { delay: 4000 });
 
     Velocity.animate(
       React.findDOMNode(this.refs.al1),
-      "transition.whirlIn",
+      "transition.bounceDownIn",
       { delay: 6000 });
 
   }
@@ -83,32 +87,9 @@ export class MainHome extends Component {
   render() {
     return (
 
-      <div className="site-content container" >
+      <div>
 
-        <div className="grid site-grid--landing wrap">
-
-          <div className="col--padded size--1-of-2 medium-size--1-of-3" >
-            <figure >
-              <div ref="p1" style={{margin: "25px"}}></div>
-              <div className="text-heading--label">Todays Visits</div>
-            </figure>
-          </div>
-          <div className="col--padded size--1-of-2 medium-size--1-of-3">
-            <figure >
-              <div ref="p2" style={{margin: "25px"}}></div>
-              <div className="text-heading--label">Todays Surveys</div>
-            </figure>
-          </div>
-          <div className="col--padded size--1-of-2 medium-size--1-of-3" >
-            <figure >
-              <div ref="p3" style={{margin: "25px"}}></div>
-              <div className="text-heading--label">Todays Order Value</div>
-            </figure>
-          </div>
-
-        </div>
-
-        <div ref="al1" style={{display: "none"}} className="notify notify--alert notify--error theme--inverse-text theme--alert-texture">
+        <div ref="al1" style={{display: "none", marginTop: "10px"}} className="notify notify--alert notify--error theme--inverse-text theme--alert-texture">
           <button className="button notify__close" onClick={this.closeAl1.bind(this)}>
             <SvgIcon svgClass="button__icon button__icon--inverse" useHref="/assets/icons/utility-sprite/svg/symbols.svg#close"/>
             <span className="assistive-text">Close</span>
@@ -120,6 +101,87 @@ export class MainHome extends Component {
             <a href="#" >More Information</a>
           </h2>
         </div>
+
+        <div className="card" style={{marginTop: "10px"}}>
+          <header className="card__header grid">
+            <div className="media media--center has-flexi-truncate">
+              <div className="media__figure">
+                <SvgIcon svgClass={"icon icon__svg  icon-standard-dashboard "} useHref={"/assets/icons/standard-sprite/svg/symbols.svg#dashboard"}/>
+              </div>
+              <div className="media__body">
+                <h3 className="text-heading--small truncate">How's my week going?</h3>
+              </div>
+            </div>
+          </header>
+
+        <div className="card_inner grid  wrap">
+
+          <div className="col--padded size--1-of-2 medium-size--1-of-3" >
+            <figure >
+              <div ref="p1" style={{margin: "20px"}}></div>
+              <div className="progress--label">Todays Visits</div>
+            </figure>
+          </div>
+          <div className="col--padded size--1-of-2 medium-size--1-of-3">
+            <figure >
+              <div ref="p2" style={{margin: "20px"}}></div>
+              <div className="progress--label">Todays Surveys</div>
+            </figure>
+          </div>
+          <div className="col--padded size--1-of-2 medium-size--1-of-3" >
+            <figure >
+              <div ref="p3" style={{margin: "20px"}}></div>
+              <div className="progress--label">Todays Order Value</div>
+            </figure>
+          </div>
+
+        </div>
+      </div>
+
+        <div className="card" style={{marginTop: "10px"}}>
+          <header className="card__header grid">
+            <div className="media media--center has-flexi-truncate">
+              <div className="media__figure">
+                <SvgIcon svgClass={"icon icon__svg  icon-standard-event "} useHref={"/assets/icons/standard-sprite/svg/symbols.svg#event"}/>
+              </div>
+              <div className="media__body">
+                <h3 className="text-heading--small truncate">Next Appointment</h3>
+              </div>
+            </div>
+          </header>
+
+          <div ref="nextappt" className="media tile tile--kanban" >
+
+            <div className="media__figure">
+              <span className="avatar avatar--circle avatar--small">
+                <img src={"data:image/JPEG;base64,"}/>
+              </span>
+            </div>
+            <div className="media__body">
+              <div className="tile">
+                <div className="grid wrap">
+                  <div className="col size--1-of-1 text-body--regular">
+                    <span className="m-left--x-small float-right">
+                      <span>today, 12:30am</span>
+                    </span>
+                    <p className="truncate">
+                      <a href="#">John Smth</a>
+                    </p>
+                  </div>
+                  <div className="col text-body--small">
+                    <ul className="list--horizontal">
+                      <li className="list__item list__item--separator">Category Manager</li>
+                      <li className="list__item list__item--separator"></li>
+                      <li className="list__item list__item--separator"></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
 
       </div>
     );
@@ -164,12 +226,12 @@ export default class Main extends Component {
   render() {
     return (
       <div>
-      <header className=" site-masthead--landing theme--brand text-longform container" style={{paddingTop: "2rem",  paddingBottom: "2rem" }}>
-        <h1 className="text-heading--large" data-reactid=".24h8wenc16o.1.2.0.0">{Main.navProps.name}</h1>
+      <header className=" site-masthead--landing theme--brand text-longform container" style={{paddingTop: "0.6rem",  paddingBottom: "0.6rem" }}>
+        <h1 className="text-heading--large">{Main.navProps.name}</h1>
       </header>
       <MainHome/>
     </div>
     )
   }
 }
-Main.navProps = {name: 'my dashboard', icon: 'dashboard', nav: Main.name};
+Main.navProps = {name: 'my dashboard', icon: 'dashboard', nav: Main.name, showSync: true};

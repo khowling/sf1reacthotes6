@@ -10,6 +10,28 @@
 // Salesforce Design System
 @import "../../node_modules/salesforce-design-system/scss/index-custom-tokens.scss";
 
+.card_inner {
+  padding-bottom: 1.5rem;
+  text-align: center;
+  background-color: white;
+}
+
+.progress--label {
+  font-size: 0.75rem;
+  line-height: 1.0;
+  text-transform: uppercase;
+  letter-spacing: 0.0625em;
+  color: #54698d;
+}
+@media (min-width: 61.25em) {
+.progress--label {
+  font-size: 0.875rem;
+  line-height: 1.25;
+  text-transform: uppercase;
+  letter-spacing: 0.0625em;
+  color: #54698d;
+}
+}
 
 .nav_icon {
   padding: 6px;

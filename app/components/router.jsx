@@ -56,12 +56,14 @@ export default class Router extends Component {
         var newComp = Router.getURLNav();
         console.log ('App url changed : ' + JSON.stringify(newComp));
         //if (newComp !== this.state.renderThis) {
-          this.setState ({renderThis: newComp.hash, urlparam: newComp.params});
+        this.props.updateRoute (newComp.hash);
+        this.setState ({renderThis: newComp.hash, urlparam: newComp.params});
         //};
       });
 
       var newComp = Router.getURLNav();
       console.log ('App Initial URL : ' + JSON.stringify(newComp));
+      this.props.updateRoute (newComp.hash);
       this.state =  {renderThis: newComp.hash, urlparam: newComp.params, formdata: []};
     }
 /*

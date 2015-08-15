@@ -9,10 +9,13 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var pkg = require('./package.json');
 var port = pkg.config.devPort,
-    host = pkg.config.devHost;
+    host = pkg.config.devHost,
+    user = pkg.config.devAccount;
 
 var DEBUG = process.env.NODE_ENV === 'development';
 var TEST = process.env.NODE_ENV === 'test';
+var VISUALFORCE = process.env.BUILD_TARGET === 'visualforce';
+
 var jsBundle = path.join('js', util.format('[name].%s.js', pkg.version));
 var cssBundle = path.join('css', util.format('[name].%s.css', pkg.version));
 
@@ -62,17 +65,21 @@ var sassLoader = ExtractTextPlugin.extract('style-loader', [
     'sass-loader?' + sassParams.join('&')
   ].join('!'));
 var fileLoader = 'file-loader?name=[path][name].[ext]';
-var forceCreds = fs.readFileSync(process.env.HOME +"/.force/accounts/khowling@posa.ul", "utf8").match(/\"AccessToken\":\"([^\!]+)!([^\"]+)/);
+var forceCreds = fs.readFileSync(process.env.HOME +"/.force/accounts/"+user, "utf8").match(/\"AccessToken\":\"([^\!]+)!([^\"]+)\"/);
+var instanceURL = fs.readFileSync(process.env.HOME +"/.force/accounts/"+user, "utf8").match(/\"InstanceUrl\":\"([^\"]+)\"/)[1];
+
 console.log ('accesstoken : ' + forceCreds[1] + '!' + forceCreds[2]);
 var htmlLoader = fileLoader + '!' +
   'template-html-loader?' + [
     'raw=true',
     'engine=lodash',
     'version=' + pkg.version,
-    'title=' + pkg.name,
-    'debug=' + DEBUG,
-    'AccessToken1="' + forceCreds[1] + '"',
-    'AccessToken2="' + forceCreds[2] + '"'
+    'TITLE=' + pkg.name,
+    'DEBUG=' + DEBUG,
+    'VISUALFORCE=' + VISUALFORCE,
+    'ACCESSTOKEN_1="' + forceCreds[1] + '"',
+    'ACCESSTOKEN_2="' + forceCreds[2] + '"',
+    'INSTANCE_URL="'  + instanceURL   + '"'
   ].join('&')
 
 

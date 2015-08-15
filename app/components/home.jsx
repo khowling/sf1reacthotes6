@@ -222,16 +222,16 @@ export  class NavElement extends Component {
   }
 }
 
-export default class Main extends Component {
+export default class Home extends Component {
   render() {
     return (
       <div>
       <header className=" site-masthead--landing theme--brand text-longform container" style={{paddingTop: "0.6rem",  paddingBottom: "0.6rem" }}>
-        <h1 className="text-heading--large">{Main.navProps.name}</h1>
+        <h1 className="text-heading--large">{Home.navProps.name}</h1>
       </header>
       <MainHome/>
     </div>
     )
   }
 }
-Main.navProps = {name: 'my dashboard', icon: 'dashboard', nav: Main.name, showSync: true};
+Home.navProps = {name: 'my dashboard', icon: 'dashboard', nav: Home.name, showSync: true};

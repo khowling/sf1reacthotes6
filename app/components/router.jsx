@@ -10,7 +10,7 @@ export default class Router extends Component {
         // consistent across browsers - Firefox will pre-decode it!
         // window.location.pathname + window.location.search
         window.location.href.split('#')[1] || ''
-      ) || 'Main';
+      ) || 'Home';
       console.log ('App _getURLNav url changed : ' + gethash);
       let [comp, parms] = gethash.split('?');
       let paramjson = {};

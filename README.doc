@@ -1,5 +1,18 @@
-React ES6 apps for salesforce
 
-based on https://github.com/badsyntax/react-seed
+Field Sales App (Demo - not finished)
+-------------------------------------
+
+Contains:
+  Home (Landing)
+  Products
+  Customers
+  TimeLine
+  - SyncProgress (SyncButton)
+  - Router (router)
+  - MeniNav (popup menu with velocityjs)
+
+Offline Architectect - React/ES6 app
+
+boilerplace based on https://github.com/badsyntax/react-seed
 
 (until avaiable on npm - extract into node_modules salesforce-design-system)

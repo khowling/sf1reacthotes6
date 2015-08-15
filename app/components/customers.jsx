@@ -8,7 +8,7 @@ import {TabHeading, SvgIcon} from './lowlevel.jsx';
 import SFData from '../service/sfdata.es6';
 
 
-export default class SearchDialog extends Component {
+export default class Customers extends Component {
 
   constructor(props) {
     super(props);
@@ -40,7 +40,7 @@ export default class SearchDialog extends Component {
 
         <div className="lookup" data-select="multi" data-scope="single" data-typeahead="true">
 
-          <TabHeading icon={SearchDialog.navProps.icon} title={SearchDialog.navProps.name}/>
+          <TabHeading icon={Customers.navProps.icon} title={Customers.navProps.name}/>
 
           <div className="form-element m-bottom--small">
             <div className="lookup__control input-has-icon input-has-icon--right">
@@ -94,4 +94,4 @@ export default class SearchDialog extends Component {
     );
   }
 }
-SearchDialog.navProps = {name: 'my orders', icon: 'opportunity', nav: SearchDialog.name};
+Customers.navProps = {name: 'my customers', icon: 'opportunity', nav: Customers.name};
